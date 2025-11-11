@@ -114,7 +114,9 @@
                                     </div>
 
                                     <hr class="my-3" style="border-color: #f0f0f0;">
-
+                                    @php
+                                        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+                                    @endphp
                                     {{-- Domain Info --}}
                                     <div class="info-section mb-4">
                                         <h6 class="text-uppercase small fw-bold text-muted mb-3"
@@ -122,23 +124,21 @@
                                             <i class="fas fa-globe me-2"></i>{{ __('domain') }}
                                         </h6>
                                         <div class="d-flex flex-column gap-2">
-                                            @if ($tenant->domains->isNotEmpty())
-                                                @foreach ($tenant->domains as $domain)
-                                                    <div class="rounded" style="background-color: #f0f3ff;">
-                                                        <code
-                                                            class="text-primary float-start p-2">{{ $domain->domain }}</code>
-                                                        <code
-                                                            class="text-primary float-end border-start border-primary-subtle rounded-0 p-2">{{ $displayDomain }}</code>
-                                                    </div>
-                                                @endforeach
-                                            @else
-                                                <div class="d-flex flex-column">
-                                                    <div class="rounded" style="background-color: #f0f3ff;">
-                                                        <code
-                                                            class="text-primary float-end border-start border-primary-subtle rounded-0 p-2">{{ $displayDomain }}</code>
-                                                    </div>
+                                            @forelse ($tenant->domains as $domain)
+                                                @php
+                                                    $display = str_replace($appHost, '', $domain->domain);
+                                                @endphp
+                                                <div class="rounded" style="background-color: #f0f3ff;">
+                                                    <code class="text-primary float-start p-2">{{ $display }}</code>
+                                                    <code
+                                                        class="text-primary float-end border-start border-primary-subtle rounded-0 p-2">{{ $appHost }}</code>
                                                 </div>
-                                            @endif
+                                            @empty
+                                                <div class="rounded" style="background-color: #f0f3ff;">
+                                                    <code
+                                                        class="text-primary float-end border-start border-primary-subtle rounded-0 p-2">{{ $appHost }}</code>
+                                                </div>
+                                            @endforelse
                                         </div>
                                     </div>
 
@@ -154,12 +154,13 @@
                                             style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                             <div>
                                                 <p class="text-muted small mb-1">{{ __('database_name') }}</p>
-                                                <code class="d-block small text-break">{{ $tenant->db_name ?? $tenant->tenancy_db_name }}</code>
+                                                <code
+                                                    class="d-block small text-break">{{ $tenant->db_name ?? $tenant->tenancy_db_name }}</code>
                                             </div>
                                             <div>
                                                 <p class="text-muted small mb-1">{{ __('database_host') }}</p>
                                                 <code
-                                                    class="d-block small text-break">{{ $tenant->db_host ?? $tenant->tenancy_db_host}}:{{ $tenant->db_port ?? $tenant->tenancy_db_port }}</code>
+                                                    class="d-block small text-break">{{ $tenant->db_host ?? $tenant->tenancy_db_host }}:{{ $tenant->db_port ?? $tenant->tenancy_db_port }}</code>
                                             </div>
                                             <div>
                                                 <p class="text-muted small mb-1">{{ __('access_key') }}</p>

@@ -19,6 +19,11 @@ class TenantRepository implements TenantRepositoryInterface
         return $tenant->domains()->create($data);
     }
 
+    public function findOrFail($id)
+    {
+        return Tenant::findOrFail($id);
+    }
+
     public function search(
         string $keyword = '',
         string $status = '',
@@ -149,6 +154,4 @@ class TenantRepository implements TenantRepositoryInterface
         $tenant->save();
         return $tenant;
     }
-
-
 }

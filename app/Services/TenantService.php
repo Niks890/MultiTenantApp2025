@@ -9,6 +9,7 @@ use App\Repositories\Contracts\TenantRepositoryInterface;
 use App\Repositories\Contracts\AdminTenantRepositoryInterface;
 use App\Repositories\Contracts\ProvinceRepositoryInterface;
 use App\Repositories\Contracts\WardRepositoryInterface;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -690,5 +691,68 @@ class TenantService
         $parts = array_filter([$street, $wardName, $provinceName]);
 
         return implode(', ', $parts);
+    }
+
+    public function assignAdminToTenant(Tenant $tenant, $adminId)
+    {
+        DB::beginTransaction();
+        try {
+            $oldAdminId = $tenant->admin_tenant_id;
+            $tenant->admin_tenant_id = $adminId;
+            $tenant->save();
+            if ($adminId != $oldAdminId) {
+                $this->syncAdminToTenantDatabase($tenant, $adminId);
+            }
+            DB::commit();
+            Log::info('Phân quyền admin cho cửa hiệu', [
+                'tenant_id' => $tenant->id,
+                'admin_id' => $adminId,
+                'old_admin_id' => $oldAdminId,
+                'ip' => request()->ip(),
+            ]);
+            return true;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Phân quyền admin thất bại', [
+                'tenant_id' => $tenant->id,
+                'admin_id' => $adminId,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    private function syncAdminToTenantDatabase(Tenant $tenant, $adminId)
+    {
+        try {
+            $newAdmin = AdminTenant::findOrFail($adminId);
+            tenancy()->initialize($tenant);
+            DB::table('mise_accounts')->truncate();
+            DB::table('mise_accounts')->insert([
+                'username' => $newAdmin->username,
+                'display_name' => $newAdmin->display_name,
+                'email' => $newAdmin->email ?? null,
+                'phone_number' => $newAdmin->phone_number ?? null,
+                'date_of_birth' => $newAdmin->date_of_birth ?? null,
+                'address' => $newAdmin->address ?? null,
+                'password' => $newAdmin->password,
+                'delete_flg' => $newAdmin->delete_flg ?? 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            tenancy()->end();
+            Log::info('Đã đồng bộ admin sang database tenant', [
+                'tenant_id' => $tenant->id,
+                'admin_id' => $adminId,
+                'username' => $newAdmin->username,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Lỗi đồng bộ admin sang database tenant', [
+                'tenant_id' => $tenant->id,
+                'admin_id' => $adminId,
+                'error' => $e->getMessage(),
+            ]);
+            throw new \Exception("Lỗi đồng bộ admin: " . $e->getMessage());
+        }
     }
 }

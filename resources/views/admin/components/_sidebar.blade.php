@@ -20,16 +20,12 @@
     <div class="sidebar-menu">
         <ul class="menu">
             <li class="sidebar-title">{{ __('menu') }}</li>
-
-            {{-- Tổng quan --}}
             <li class="sidebar-item {{ request()->routeIs('admin.index') ? 'active' : '' }}">
                 <a href="{{ route('admin.index') }}" class="sidebar-link">
                     <i class="bi bi-grid-fill"></i>
                     <span>{{ __('overview') }}</span>
                 </a>
             </li>
-
-            {{-- Quản lý cửa hiệu --}}
             <li class="sidebar-item has-sub {{ $shopMenuActive ? 'active submenu-open' : '' }}">
                 <a href="javascript:void(0)" class="sidebar-link">
                     <i class="bi bi-shop-window"></i>
@@ -51,20 +47,16 @@
                     </li>
                 </ul>
             </li>
-
-            {{-- Quản lý thuế --}}
             <li class="sidebar-item {{ request()->routeIs('taxes.*') ? 'active' : '' }}">
                 <a href="{{ route('taxes.index') }}" class="sidebar-link">
                     <i class="bi bi-percent"></i>
                     <span>{{ __('manage_item', ['item' => strtolower(__('tax'))]) }}</span>
                 </a>
             </li>
-
-            {{-- Hợp đồng & thanh toán --}}
-            {{-- <li class="sidebar-item has-sub">
+            <li class="sidebar-item has-sub">
                 <a href="javascript:void(0)" class="sidebar-link">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Hợp đồng &amp; thanh toán</span>
+                    <span>Quản lý cho thuê</span>
                 </a>
                 <ul class="submenu">
                     <li class="submenu-item">
@@ -77,22 +69,28 @@
                         <a href="javascript:void(0)" class="submenu-link">Phương thức thanh toán</a>
                     </li>
                 </ul>
-            </li> --}}
-
-            {{-- Quản lý gói dịch vụ --}}
+            </li>
             <li class="sidebar-item {{ request()->routeIs('plans.*') ? 'active' : '' }}">
                 <a href="{{ route('plans.index') }}" class="sidebar-link">
                     <i class="bi bi-box-seam"></i>
                     <span>{{ __('manage_item', ['item' => strtolower(__('plan'))]) }}</span>
                 </a>
             </li>
-
-            {{-- Quản lý người dùng hệ thống --}}
             <li class="sidebar-item {{ request()->routeIs('system-user.*') ? 'active' : '' }}">
                 <a href="{{ route('system-user.index') }}" class="sidebar-link">
                     <i class="bi bi-person-gear"></i>
                     <span>{{ __('manage_item', ['item' => strtolower(__('system_user'))]) }}</span>
                 </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>{{ __('logout') }}</span>
+                </a>
+
+                <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
             </li>
         </ul>
     </div>

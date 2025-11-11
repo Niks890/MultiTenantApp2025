@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignAdminRequest;
 use App\Http\Requests\TenantRequest;
 use App\Http\Requests\UpdateTenantRequest;
 use App\Models\AdminTenant;
-use App\Models\Group;
 use App\Models\Tenant;
 use App\Services\AdminTenantService;
 use App\Services\GroupService;
@@ -200,32 +200,28 @@ class TenantController extends Controller
         }
     }
 
-    public function assignAdmin(Request $request, $id)
+    public function assignAdmin(AssignAdminRequest $request, $id)
     {
         try {
-            $validatedData = $request->validate([
-                'admin_id' => 'required|integer|exists:m_admin_tenants,id',
-            ]);
             $tenant = Tenant::findOrFail($id);
-            $admin = AdminTenant::find($validatedData['admin_id']);
+            if (!$tenant) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Cửa hiệu không tồn tại',
+                ], 404);
+            }
+            $admin = AdminTenant::find($request['admin_id']);
             if (!$admin) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Tài khoản admin không tồn tại',
                 ], 404);
             }
-            $tenant->admin_tenant_id = $validatedData['admin_id'];
-            $tenant->save();
+            $this->tenantService->assignAdminToTenant($tenant, $request['admin_id']);
             return response()->json([
                 'status' => true,
                 'message' => __('successMessage'),
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => __('successErrorMessage'),
-                'errors' => $e->errors(),
-            ], 422);
         } catch (\Exception $e) {
             Log::error('Lỗi assign admin: ' . $e->getMessage());
             return response()->json([
