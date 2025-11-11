@@ -1,0 +1,27 @@
+.switches {
+    width: fit-content;
+    padding: 0.3em .3em;
+    margin-bottom: 1em;
+    color: #fff;
+}
+
+.switches span {
+    font-size: .85em;
+}
+
+.switches i {
+    vertical-align: middle;
+    font-size: 1.2em;
+}
+
+.switches.active {
+    background-color: #50c468;
+}
+
+.switches.maintenance {
+    background-color: #ffc107;
+}
+
+.switches.deleted {
+    background-color: #dc3545;
+}

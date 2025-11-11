@@ -1,0 +1,34 @@
+.choices {
+    margin-bottom: 0;
+}
+
+.choices__inner {
+    background-color: #fff
+}
+
+.choices.is-disabled .choices__inner .choices__list {
+    background-color: #EAEAEA;
+}
+
+.choices-select {
+    top: 100% !important;
+    
+    bottom: auto !important;
+}
+
+.choices+.valid-feedback,
+.choices+.invalid-feedback {
+    display: block !important;
+}
+
+.choices .choices__inner.is-invalid {
+    border-color: #dc3545;
+}
+
+.choices .choices__inner.is-valid {
+    border-color: #198754;
+}
+
+.choices__list--dropdown, .choices__list.choices__list--dropdown, div.choices__list.choices__list--dropdown.is-active, .choices__list[aria-expanded] {
+    z-index: 9999 !important;
+}

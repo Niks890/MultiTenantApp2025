@@ -1,0 +1,78 @@
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div,
+li,
+td,
+th {
+    font-family: Helvetica, Arial, sans-serif !important;
+}
+
+.sidebar-header .logo img {
+    height: 100px !important;
+    width: auto !important;
+}
+
+.dark-mode .sidebar-header .logo img {
+    height: 100px !important;
+    width: auto !important;
+}
+.submenu-link {
+    text-wrap: nowrap !important;
+}
+
+.text-primary-emphasis-custom {
+    color: #5e9eff !important;
+}
+
+.bg-secondary-custom {
+    background-color: #6E757D !important;
+}
+
+.bg-success-custom {
+   background-color: #50C468 !important;
+}
+
+.bg-danger-custom {
+    background-color: #EF585F !important;
+}
+
+.btn-secondary-custom {
+    background-color: #6E757D !important;
+    border-color: #6E757D !important;
+    color: #fff !important;
+}
+
+.btn-success-custom {
+    background-color: #50C468 !important;
+    border-color: #50C468 !important;
+    color: #fff !important;
+}
+
+.btn-danger-custom {
+    background-color: #EF585F !important;
+    border-color: #EF585F !important;
+    color: #fff !important;
+}
+
+.btn-secondary-custom:hover {
+    background-color: #4c5156 !important;
+    border-color: #4c5156 !important;
+}
+
+.btn-success-custom:hover {
+    background-color: #46ae5b !important;
+    border-color: #46ae5b !important;
+}
+
+.btn-danger-custom:hover {
+    background-color: #cb494f !important;
+    border-color: #cb494f !important;
+}

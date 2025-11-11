@@ -1,0 +1,39 @@
+/* --- Modal Base --- */
+.modal-dialog-scrollable .modal-content {
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.modal-dialog-scrollable .modal-body {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+.modal {
+    overflow-y: auto !important;
+}
+
+.modal-open {
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+/* --- Avatar & Crop Area --- */
+#avatarPreview:hover {
+    opacity: 0.85;
+    transition: all 0.2s ease-in-out;
+}
+
+#cropperArea {
+    width: 100% !important;
+    height: 300px !important;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .modal-dialog-scrollable .modal-body {
+        max-height: calc(100vh - 150px);
+    }
+}
