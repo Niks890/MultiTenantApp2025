@@ -113,22 +113,22 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-        // 'mysql_railway_service' => [
-        //     'driver' => 'mysql',
-        //     'host' => env('RAILWAY_DB_HOST', 'hopper.proxy.rlwy.net'),
-        //     'port' => env('RAILWAY_DB_PORT', '18993'),
-        //     'database' => null,
-        //     'username' => env('RAILWAY_DB_USERNAME', 'root'),
-        //     'password' => env('RAILWAY_DB_PASSWORD', ''),
-        //     'charset' => 'utf8mb4',
-        //     'collation' => 'utf8mb4_unicode_ci',
-        //     'prefix' => '',
-        //     'strict' => true,
-        //     'engine' => null,
-        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
-        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-        //     ]) : [],
-        // ],
+        'mysql_railway_service' => [
+            'driver' => 'mysql',
+            'host' => env('RAILWAY_DB_HOST', 'hopper.proxy.rlwy.net'),
+            'port' => env('RAILWAY_DB_PORT', '18993'),
+            'database' => null,
+            'username' => env('RAILWAY_DB_USERNAME', 'root'),
+            'password' => env('RAILWAY_DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
     ],
 
     /*
