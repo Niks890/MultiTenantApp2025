@@ -9,7 +9,6 @@ use App\Repositories\Contracts\TenantRepositoryInterface;
 use App\Repositories\Contracts\AdminTenantRepositoryInterface;
 use App\Repositories\Contracts\ProvinceRepositoryInterface;
 use App\Repositories\Contracts\WardRepositoryInterface;
-use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

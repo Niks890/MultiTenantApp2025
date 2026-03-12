@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\AdminTenantController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\GroupTenantController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\SystemUserController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -35,6 +38,9 @@ foreach (config('tenancy.central_domains') as $domain) {
                 'tenant' => TenantController::class,
                 'plans' => PlanController::class,
                 'taxes' => TaxController::class,
+                'payment-methods' => PaymentMethodController::class,
+                'contracts' => ContractController::class,
+                'transaction' => TransactionController::class
             ]);
             Route::get('/tenant/by-admin/{adminId}', [TenantController::class, 'getTenantsByAdmin'])->name('tenant.by-admin');
             Route::get('/tenant/detail/{tenantId}', [TenantController::class, 'getTenantDetail'])->name('tenant.detail');
