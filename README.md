@@ -4,7 +4,7 @@ This is a multi-tenant system built using Laravel 12, designed to support multip
 
 #CDM
 <p align="center">
-  <img src="<img width="1551" height="798" alt="image" src="https://raw.githubusercontent.com/Niks890/MultiTenantApp2025/8dffbb341817c5683e44ec04358fc576e5839947/CDM.png?token=AXLGBQXEL5Q24DSUCPBFIBLJWJDJY" />
+  <img src="<img width="1551" height="798" alt="image" src="https://github.com/Niks890/MultiTenantApp2025/blob/bb477399be7377c174f08431575bbe5d2ba098e3/CDM1.png" />
 " width="600">
 </p>
 
