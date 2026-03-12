@@ -141,5 +141,7 @@
     "tenant_status": "Trạng thái cửa hiệu",
     "tenant_deleted": "Đã bị xoá",
     "admin_tenant_username": "Tài khoản quản trị",
-    "username_database": "Tên tài khoản DB"
+    "username_database": "Tên tài khoản DB",
+    "payment_method": "Phương thức thanh toán",
+    "payment_method_name": "Tên phương thức thanh toán"
 }

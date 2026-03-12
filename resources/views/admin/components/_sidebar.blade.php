@@ -47,28 +47,25 @@
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-item {{ request()->routeIs('taxes.*') ? 'active' : '' }}">
-                <a href="{{ route('taxes.index') }}" class="sidebar-link">
-                    <i class="bi bi-percent"></i>
-                    <span>{{ __('manage_item', ['item' => strtolower(__('tax'))]) }}</span>
-                </a>
-            </li>
             <li class="sidebar-item has-sub">
                 <a href="javascript:void(0)" class="sidebar-link">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Quản lý cho thuê</span>
                 </a>
                 <ul class="submenu">
-                    <li class="submenu-item">
-                        <a href="javascript:void(0)" class="submenu-link">Quản lý hợp đồng</a>
+                    <li class="submenu-item {{ request()->routeIs('contracts.*') ? 'active' : '' }}">
+                        <a href="{{ route('contracts.index') }}" class="submenu-link">Quản lý hợp đồng</a>
                     </li>
-                    <li class="submenu-item">
-                        <a href="javascript:void(0)" class="submenu-link">Giao dịch thanh toán</a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="javascript:void(0)" class="submenu-link">Phương thức thanh toán</a>
+                    <li class="submenu-item {{ request()->routeIs('payment-methods.*') ? 'active' : '' }}">
+                        <a href="{{ route('payment-methods.index') }}" class="submenu-link">Phương thức thanh toán</a>
                     </li>
                 </ul>
+            </li>
+            <li class="sidebar-item {{ request()->routeIs('taxes.*') ? 'active' : '' }}">
+                <a href="{{ route('taxes.index') }}" class="sidebar-link">
+                    <i class="bi bi-percent"></i>
+                    <span>{{ __('manage_item', ['item' => strtolower(__('tax'))]) }}</span>
+                </a>
             </li>
             <li class="sidebar-item {{ request()->routeIs('plans.*') ? 'active' : '' }}">
                 <a href="{{ route('plans.index') }}" class="sidebar-link">
@@ -83,7 +80,8 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <a href="#" class="sidebar-link"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>{{ __('logout') }}</span>
                 </a>
