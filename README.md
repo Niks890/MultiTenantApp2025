@@ -2,6 +2,12 @@
 
 This is a multi-tenant system built using Laravel 12, designed to support multiple tenants with isolated data. Each tenant has its own database or schema, ensuring data separation while sharing the same codebase. The system is ideal for SaaS applications requiring scalability and customization.
 
+#CDM
+<p align="center">
+  <img src="<img width="1551" height="798" alt="image" src="https://github.com/user-attachments/assets/f8f315ba-b672-43ca-81f4-a8209a07399b" />
+" width="600">
+</p>
+
 ## Features
 
 -   Multi-tenancy with database-per-tenant or schema-per-tenant approach.
