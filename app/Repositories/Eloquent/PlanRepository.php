@@ -21,6 +21,11 @@ class PlanRepository implements PlanRepositoryInterface
         return $this->model->notDeleted()->get();
     }
 
+    public function getPlanActive(): Collection
+    {
+        return $this->model->notDeleted()->where('is_active', true)->get();
+    }
+
     public function count(): int
     {
         return $this->model->notDeleted()->count();

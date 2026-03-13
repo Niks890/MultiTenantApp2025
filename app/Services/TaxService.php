@@ -31,6 +31,15 @@ class TaxService implements TaxServiceInterface
         }
     }
 
+    public function getCurrentTax()
+    {
+        try {
+            return $this->taxRepository->getCurrentTax();
+        } catch (\Exception $e) {
+            throw new FetchException($this->resourceName);
+        }
+    }
+
     public function count(): int
     {
         return $this->taxRepository->count();

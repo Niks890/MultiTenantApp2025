@@ -27,4 +27,6 @@ interface PlanRepositoryInterface
     public function paginate(int $perPage = 10): LengthAwarePaginator;
 
     public function paginateWithFilters(array $filters, int $perPage = 10): LengthAwarePaginator;
+
+    public function getPlanActive(): Collection;
 }

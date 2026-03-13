@@ -143,5 +143,21 @@
     "admin_tenant_username": "Tài khoản quản trị",
     "username_database": "Tên tài khoản DB",
     "payment_method": "Phương thức thanh toán",
-    "payment_method_name": "Tên phương thức thanh toán"
+    "payment_method_name": "Tên phương thức thanh toán",
+    "payment_mode": "Hình thức trả",
+    "start_at": "Ngày bắt đầu",
+    "end_at": "Ngày kết thúc",
+    "due_date": "Ngày đến hạn",
+    "contract_status": "Trạng thái hợp đồng",
+    "paid": "Đã thanh toán",
+    "overdue": "Quá hạn thanh toán",
+    "unpaid": "Còn nợ",
+    "expired": "Hết hạn hợp đồng",
+    "amount_after_tax": "Tổng tiền phải trả",
+    "total_paid": "Tổng tiền đã trả",
+    "cash": "Tiền mặt",
+    "bank_transfer": "Chuyển khoản",
+    "credit_card": "Thẻ tín dụng",
+    "e-wallet": "Ví điện tử",
+    "filter by": "Lọc theo :item"
 }

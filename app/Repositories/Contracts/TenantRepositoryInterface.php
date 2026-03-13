@@ -13,7 +13,7 @@ interface TenantRepositoryInterface
         string $adminTenantId = '',
         $perPage = null
     );
-
+    public function all();
     public function create(array $data);
     public function createDomain(Tenant $tenant, array $data);
     public function edit($id);
@@ -26,4 +26,5 @@ interface TenantRepositoryInterface
     public function findDomain($id);
     public function getTenantLogo($tenantId);
     public function updateStatus($id, bool $isActive = true);
+    public function getTenantWithAdmin();
 }

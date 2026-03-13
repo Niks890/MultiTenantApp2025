@@ -21,7 +21,7 @@ return [
     'central_domains' => [
         '127.0.0.1',
         'localhost',
-        env('APP_URL', 'localhost'),
+        // env('APP_URL', 'localhost'),
     ],
 
     /**

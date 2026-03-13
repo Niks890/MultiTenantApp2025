@@ -26,6 +26,11 @@ class TaxRepository implements TaxRepositoryInterface
         return $this->model->notDeleted()->count();
     }
 
+    public function getCurrentTax()
+    {
+        return $this->model->notDeleted()->where('is_active', true)->first();
+    }
+
     public function countWithFilters(array $filters): int
     {
         $query = $this->model->newQuery()->notDeleted();

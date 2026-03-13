@@ -32,6 +32,15 @@ class PlanService implements PlanServiceInterface
         }
     }
 
+    public function getPlanActive(): Collection
+    {
+        try {
+            return $this->planRepository->getPlanActive();
+        } catch (\Exception $e) {
+            throw new FetchException($this->resourceName);
+        }
+    }
+
     public function count(): int
     {
         return $this->planRepository->count();

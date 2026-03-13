@@ -14,6 +14,12 @@ class TenantRepository implements TenantRepositoryInterface
         return Tenant::create($data);
     }
 
+
+    public function getTenantWithAdmin()
+    {
+        return Tenant::with('adminTenant')->where('delete_flg', 0)->get();
+    }
+
     public function createDomain(Tenant $tenant, array $data)
     {
         return $tenant->domains()->create($data);
@@ -22,6 +28,12 @@ class TenantRepository implements TenantRepositoryInterface
     public function findOrFail($id)
     {
         return Tenant::findOrFail($id);
+    }
+
+    public function all()
+    {
+        return Tenant::where('delete_flg', 0)
+            ->get();
     }
 
     public function search(
@@ -92,7 +104,7 @@ class TenantRepository implements TenantRepositoryInterface
 
     public function getTenantDetails($tenantId)
     {
-        $tenant = Tenant::select('id', 'name', 'site_name', 'address', 'facebook_url', 'tiktok_url', 'instagram_url', 'logo')
+        $tenant = Tenant::with('adminTenant')
             ->find($tenantId);
         if ($tenant && $tenant->address === null) {
             $tenant->address = '';

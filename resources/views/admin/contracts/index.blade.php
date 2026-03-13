@@ -1,11 +1,9 @@
 @extends('admin.master')
-@section('title', 'Danh sách hợp đồng')
+@section('title', 'Quản lý hợp đồng')
 @section('content')
     <x-central.page-header title="" :breadcrumbs="[
-        'Danh sách hợp đồng' => 'javascript:void(0)',
+        'Quản lý hợp đồng' => 'javascript:void(0)',
     ]" />
-
-
     <div class="card shadow-sm">
         <div class="d-flex align-items-start justify-content-start flex-column flex-md-row pt-2 pb-4 row mt-3 ms-3">
             <div class="col-12 col-md-7">
@@ -36,53 +34,47 @@
                             </div>
                             <div class="col-md-3">
                                 <select name="tenant_id" class="choices-select form-select tenant-select">
-                                    <option value="">Lọc theo tên cửa hiệu</option>
-                                    {{-- @foreach ($groups as $group)
-                                        <option value="{{ $group->id }}" {{ $groupId == $group->id ? 'selected' : '' }}>
-                                            {{ $group->name }}
+                                    <option value="">{{__('filter by', ['item' => __('tenant_name')])}}</option>
+                                    @foreach ($tenants as $tenant)
+                                        <option value="{{ $tenant->id }}" {{ $tenantId == $tenant->id ? 'selected' : '' }}>
+                                            {{ $tenant->name }}
                                         </option>
-                                    @endforeach --}}
+                                    @endforeach
                                 </select>
                             </div>
 
                             <div class="col-md-3">
                                 <select name="status" class="choices-select form-select status-select">
-                                    <option value="">Lọc theo trạng thái hợp đồng</option>
-
-                                    {{-- <option value="active" {{ ($status ?? '') === 'active' ? 'selected' : '' }}>Hoạt
-                                        động</option>
-                                    <option value="inactive" {{ ($status ?? '') === 'inactive' ? 'selected' : '' }}>Bảo trì
-                                    </option>
-                                    <option value="deleted" {{ ($status ?? '') === 'deleted' ? 'selected' : '' }}>Đã bị xoá
-                                    </option> --}}
-
+                                    <option value="">{{__('filter by', ['item' =>strtoLower(__('contract_status'))])}}</option>
+                                    <option value="1" {{ ($status ?? '') === '1' ? 'selected' : '' }}>{{__('paid')}}</option>
+                                    <option value="2" {{ ($status ?? '') === '2' ? 'selected' : '' }}>{{__('overdue')}}</option>
+                                    <option value="3" {{ ($status ?? '') === '3' ? 'selected' : '' }}>{{__('unpaid')}}</option>
+                                    <option value="4" {{ ($status ?? '') === '4' ? 'selected' : '' }}>{{__('expired')}}</option>
+                                    <option value="5" {{ ($status ?? '') === '5' ? 'selected' : '' }}>{{__('tenant_deleted')}}</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <select name="plan_id" class="choices-select form-select plan-select" style="height: 45.45px;">
-                                    <option value="">Lọc theo gói đăng ký</option>
-                                    {{-- @foreach ($adminTenants as $admin)
-                                        <option value="{{ $admin->id }}"
-                                            {{ $adminTenantId == $admin->id ? 'selected' : '' }}>
-                                            {{ $admin->display_name }}
+                                <select name="plan_id" class="choices-select form-select plan-select"
+                                    style="height: 45.45px;">
+                                    <option value="">{{__('filter by', ['item' => __('plan')])}}</option>
+                                    @foreach ($plans as $plan)
+                                        <option value="{{ $plan->id }}"
+                                            {{ $planId == $plan->id ? 'selected' : '' }}>
+                                            {{ $plan->name }}
                                         </option>
-                                    @endforeach --}}
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="table-responsive mt-3" id="ContractTableWrapper">
-                {{-- @include('admin.contracts.partials.table', [
-                    'tenants' => $tenants,
+            <div class="table-responsive mt-3" id="contractTableWrapper">
+                @include('admin.contracts.partials.table', [
+                    'contracts' => $contracts,
                     'keyword' => $keyword,
                     'status' => $status,
                     'selectedPaginate' => $selectedPaginate,
-                ]) --}}
-
-                @include('admin.contracts.partials.table', [
-                    'contracts' => $contracts,
                 ])
             </div>
             <div id="paginationWrapper">
@@ -91,7 +83,6 @@
                     'selectedPaginate' => $selectedPaginate,
                 ])
             </div>
-
         </div>
     </div>
 @endsection
@@ -114,4 +105,5 @@
     <script src="{{ asset('assets/custom/js/contracts/search.js') }}"></script>
     <script src="{{ asset('assets/extensions/choices.js@11.1.0/public/assets/scripts/choices.min.js') }}"></script>
     <script src="{{ asset('assets/static/js/pages/form-element-select.js') }}"></script>
+    <script src="{{ asset('assets/custom/js/contracts/delete.js') }}"></script>
 @endsection

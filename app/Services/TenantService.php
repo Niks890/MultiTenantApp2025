@@ -30,6 +30,16 @@ class TenantService
         $this->provinceRepository = $provinceRepository;
     }
 
+    public function getAllTenants()
+    {
+        return $this->tenantRepository->all();
+    }
+
+    public function getTenantWithAdmin()
+    {
+        return $this->tenantRepository->getTenantWithAdmin();
+    }
+
     public function searchTenant($keyword = '', $status = '', $groupId = '', $adminTenantId = '', $perPage = null)
     {
         return $this->tenantRepository->search($keyword, $status, $groupId, $adminTenantId, $perPage);

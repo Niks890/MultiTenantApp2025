@@ -21,7 +21,7 @@
                 </td>
                 <td class="text-end">
                     <span>
-                        {{ number_format($plan->price, 0, '.', ',') }}
+                        {{ number_format($plan->price, 0, '.', ',') }} đ
                     </span>
                 </td>
                 <td>

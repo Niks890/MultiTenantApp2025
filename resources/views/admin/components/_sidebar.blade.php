@@ -47,7 +47,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-item has-sub">
+            <li class="sidebar-item has-sub {{ request()->routeIs('contracts.*') || request()->routeIs('payment-methods.*') ? 'active submenu-open' : '' }}">
                 <a href="javascript:void(0)" class="sidebar-link">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Quản lý cho thuê</span>

@@ -2,24 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TransactionService;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    protected $transactionService;
+
+    public function __construct(TransactionService $transactionService)
     {
-        //
+        $this->transactionService = $transactionService;
     }
 
     /**
@@ -27,16 +20,25 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'contract_id' => 'required|exists:t_contracts,id',
+            'amount' => 'required|numeric|min:0',
+            'payment_method' => 'required|exists:m_payment_methods,id',
+            'file_path' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
+        ]);
+
+        $data = $request->all();
+        if ($request->hasFile('file_path')) {
+            $data['file_path'] = $request->file('file_path');
+        }
+        try {
+            $this->transactionService->store($data);
+            return response()->json(['message' => 'Tạo giao dịch thành công']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Tạo giao dịch thất bại: ' . $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
