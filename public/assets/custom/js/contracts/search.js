@@ -1,10 +1,10 @@
 $(document).ready(function () {
-    const $form = $('#searchTenantForm');
+    const $form = $('#searchContractForm');
     let typingTimer;
     let currentPage = 1;
     $form.on('submit', function (e) {
         e.preventDefault();
-        fetchTenants(1);
+        fetchContracts(1);
     });
 
 

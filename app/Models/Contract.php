@@ -24,8 +24,8 @@ class Contract extends Model
     ];
 
     protected $casts = [
-        'payment_mode' => 'boolean',
-        'status' => 'boolean',
+        'payment_mode' => 'integer',
+        'status' => 'integer',
         'delete_flg' => 'boolean',
         'start_at' => 'date',
         'end_at' => 'date',
@@ -53,5 +53,26 @@ class Contract extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::updating(function (Contract $contract) {
+            if ($contract->isDirty('total_paid')) {
+                $totalPaid = (float) $contract->total_paid;
+                $amountAfterTax = (float) $contract->amount_after_tax;
+                if ($contract->delete_flg == 0) {
+                    if (now()->gt($contract->end_at)) {
+                        $contract->status = 4;
+                    } elseif ($totalPaid >= $amountAfterTax) {
+                        $contract->status = 1;
+                    } elseif ($totalPaid > 0 && $totalPaid < $amountAfterTax) {
+                        $contract->status = 2;
+                    } elseif ($totalPaid == 0) {
+                        $contract->status = 3;
+                    }
+                }
+            }
+        });
     }
 }

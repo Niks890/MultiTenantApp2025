@@ -43,11 +43,16 @@ foreach (config('tenancy.central_domains') as $domain) {
                 'transaction' => TransactionController::class
             ]);
             Route::get('/tenant/by-admin/{adminId}', [TenantController::class, 'getTenantsByAdmin'])->name('tenant.by-admin');
-            Route::get('/tenant/detail/{tenantId}', [TenantController::class, 'getTenantDetail'])->name('tenant.detail');
             Route::patch('/plans/{plan}/status', [PlanController::class, 'updateStatus'])->name('plans.update_status');
             Route::patch('/tenant/{tenant}/status', [TenantController::class, 'updateTenantStatus'])->name('tenant.update_status');
             Route::patch('/taxes/{tax}/status', [TaxController::class, 'updateStatus'])->name('taxes.update_status');
             Route::post('/tenants/{id}/assign-admin', [TenantController::class, 'assignAdmin'])->name('tenant.assign-admin');
+
+
+            Route::prefix('contracts')->group(function () {
+                Route::get('/get-current-tax', [ContractController::class, 'getCurrentTax']);
+            });
+            Route::get('/tenant/detail/{tenantId}', [TenantController::class, 'getTenantDetail'])->name('tenant.detail');
         });
     });
 }

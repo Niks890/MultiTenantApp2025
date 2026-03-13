@@ -194,6 +194,21 @@
     background-color: #f8d7da;
     color: #721c24;
 }
+
+.status-unknown {
+    background-color: #e2e3e5;
+    color: #6c757d;
+}
+
+.status-overdue {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-unpaid {
+    background-color: #f8d7da;
+    color: #721c24;
+}
 /* --- Action Buttons --- */
 .action-buttons {
     display: flex;

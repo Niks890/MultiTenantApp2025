@@ -2,15 +2,15 @@
     <thead class="">
         <tr>
             <th class="text-center">{{ __('no') }}</th>
-            <th>Tên cửa hiệu</th>
-            <th>Gói đăng ký</th>
-            <th>Hình thức trả</th>
-            <th>Ngày bắt đầu</th>
-            <th>Ngày kết thúc</th>
-            <th>Ngày đến hạn</th>
-            <th>Tổng tiền phải trả</th>
-            <th>Tổng tiền đã trả</th>
-            <th class="text-center">Trạng thái hợp đồng</th>
+            <th>{{ __('tenant_name') }}</th>
+            <th>{{ __('plan') }}</th>
+            <th>{{ __('payment_mode') }}</th>
+            <th>{{ __('start_at') }}</th>
+            <th>{{ __('end_at') }}</th>
+            <th>{{ __('due_date') }}</th>
+            <th>{{ __('amount_after_tax') }}</th>
+            <th>{{ __('total_paid') }}</th>
+            <th class="text-center">{{ __('contract_status') }}</th>
             <th class="text-center">{{ __('action') }}</th>
         </tr>
     </thead>
@@ -27,71 +27,101 @@
                     <span class="tenant-info">{{ $contract->plan->name }}</span>
                 </td>
                 <td>
-                    <span class="tenant-info">{{ $contract->payment_mode }}</span>
+                    @if ($contract->payment_mode == 1)
+                        <span class="tenant-info">{{ __('cash') }}</span>
+                    @elseif($contract->payment_mode == 2)
+                        <span class="tenant-info">{{ __('bank_transfer') }}</span>
+                    @elseif($contract->payment_mode == 3)
+                        <span class="tenant-info">{{ __('credit_card') }}</span>
+                    @elseif($contract->payment_mode == 4)
+                        <span class="tenant-info">{{ __('e-wallet') }}</span>
+                    @endif
                 </td>
                 <td>
-                    <span class="tenant-info">{{ $contract->start_at }}</span>
+                    <span class="tenant-info">{{ \Carbon\Carbon::parse($contract->start_at)->format('d/m/Y') }}</span>
                 </td>
 
                 <td>
-                    <span class="tenant-info">{{ $contract->end_at }}</span>
+                    <span class="tenant-info">{{ \Carbon\Carbon::parse($contract->end_at)->format('d/m/Y') }}</span>
                 </td>
 
                 <td>
-                    <span class="tenant-info">{{ $contract->due_date }}</span>
+                    <span class="tenant-info">{{ \Carbon\Carbon::parse($contract->due_date)->format('d/m/Y') }}</span>
                 </td>
                 <td>
-                    <span class="tenant-info">{{ $contract->amount_after_tax }}</span>
+                    <span class="tenant-info">{{ number_format($contract->amount_after_tax, 0, '.', ',') }} đ</span>
                 </td>
                 <td>
-                    <span class="tenant-info">{{ $contract->total_paid }}</span>
+                    <span class="tenant-info">{{ number_format($contract->total_paid, 0, '.', ',') }} đ</span>
                 </td>
                 <td class="text-center">
-                    @if ($contract->status && !$contract->delete_flg)
-                        <span class="status-badge status-active toggle-status" data-id="{{ $contract->id }}"
-                            data-name="{{ $contract->name }}" data-status="{{ $contract->status ? 1 : 0 }}"
-                            style="cursor: pointer;">
-                            <i class="fas fa-check-circle me-1"></i>
-                            {{ __('active') }}
-                        </span>
-                    @elseif ($contract->delete_flg)
+                    @if ($contract->delete_flg)
                         <span class="status-badge status-deleted">
                             <i class="fa-solid fa-trash me-1"></i>
                             {{ __('tenant_deleted') }}
                         </span>
                     @else
-                        <span class="status-badge status-maintaince toggle-status" data-id="{{ $contract->id }}"
-                            data-status="{{ $contract->is_active ? 1 : 0 }}" data-name="{{ $contract->name }}"
-                            style="cursor: pointer;">
-                            <i class="fas fa-ban me-1"></i>
-                            {{ __('maintenance') }}
-                        </span>
+                        @switch($contract->status)
+                            @case(1)
+                                <span class="status-badge status-active toggle-status" data-id="{{ $contract->id }}"
+                                    data-status="1" style="cursor: pointer;">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    {{ __('paid') }}
+                                </span>
+                            @break
+
+                            @case(2)
+                                <span class="status-badge status-overdue toggle-status" data-id="{{ $contract->id }}"
+                                    data-status="2" style="cursor: pointer;">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ __('overdue') }}
+                                </span>
+                            @break
+
+                            @case(3)
+                                <span class="status-badge status-unpaid toggle-status" data-id="{{ $contract->id }}"
+                                    data-status="3" style="cursor: pointer;">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ __('unpaid') }}
+                                </span>
+                            @break
+
+                            @default
+                                <span class="status-badge status-unknown">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ __('expired') }}
+                                </span>
+                        @endswitch
                     @endif
                 </td>
                 <td class="action-cell text-center">
                     <div class="action-buttons">
-                        @if (!$contract->delete_flg)
-                            <a href="{{ route('contracts.edit', $contract->id) }}" class="btn-action btn-action-edit"
-                                data-bs-toggle="tooltip" title="{{ __('edit') }}">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        @endif
                         <a href="{{ route('contracts.show', $contract->id) }}" class="btn-action btn-action-view"
                             title="{{ __('view') }} {{ __('detail') }}">
                             <i class="fas fa-info-circle"></i>
                         </a>
+                        @if (!$contract->delete_flg && in_array($contract->status, [1]))
+                            <form method="POST" action="{{ route('contracts.destroy', $contract->id) }}"
+                                class="d-inline" style="margin:0;">
+                                @csrf @method('DELETE')
+                                <button type="button" class="btn-action btn-action-delete"
+                                    data-id="{{ $contract->id }}" title="{{ __('delete') }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </td>
             </tr>
-        @empty
-            <tr>
-                <td colspan="9" class="text-center">
-                    <div class="empty-state">
-                        <i class="fas fa-database fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">{{ __('no_data') }}</p>
-                    </div>
-                </td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+            @empty
+                <tr>
+                    <td colspan="12" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">{{ __('no_data') }}</p>
+                        </div>
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
