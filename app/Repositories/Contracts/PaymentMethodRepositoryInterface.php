@@ -9,4 +9,5 @@ interface PaymentMethodRepositoryInterface
     public function update($id, array $data);
     public function delete($id);
     public function search(string $keyword, $perPage = null);
+    public function checkDefaultPaymentMethod($id);
 }

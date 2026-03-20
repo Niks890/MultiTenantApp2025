@@ -87,6 +87,16 @@ class PaymentMethodService
     {
         DB::beginTransaction();
         try {
+            $validPaymentMethod = $this->paymentMethodRepository->checkDefaultPaymentMethod($id);
+            if ($validPaymentMethod) {
+                DB::rollBack();
+                Log::channel('system_user')->error('Phương thức thanh toán mặc định không thể xoá!', [
+                    'ip' => request()->ip(),
+                    'route' => '/payment-methods.destroy',
+                    'data' => $id
+                ]);
+                return false;
+            }
             $paymentMethodDeleted = $this->paymentMethodRepository->delete($id);
             if (!$paymentMethodDeleted) {
                 DB::rollBack();

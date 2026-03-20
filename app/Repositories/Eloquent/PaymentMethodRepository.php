@@ -36,6 +36,16 @@ class PaymentMethodRepository implements PaymentMethodRepositoryInterface
     }
 
 
+    public function checkDefaultPaymentMethod($id)
+    {
+        $paymentMethod = PaymentMethod::find($id);
+        if ($paymentMethod && $paymentMethod->is_default) {
+            return true;
+        }
+        return false;
+    }
+
+
     public function delete($id)
     {
         $paymentMethod = $this->find($id);
