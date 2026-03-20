@@ -33,7 +33,7 @@
                     <div class="card-body px-4 py-4">
                         <div class="row align-items-center">
                             <div class="col-8">
-                                <h6 class="text-muted font-semibold mb-2">Tổng Tenant</h6>
+                                <h6 class="text-muted font-semibold mb-2">Tổng số cửa hiệu</h6>
                                 <h4 class="font-extrabold mb-0">{{ $totalTenants ?? 0 }}</h4>
                             </div>
                             <div class="col-4 text-end">
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                         <small class="text-success mt-2 d-block">
-                            <i class="bi bi-arrow-up"></i> +{{ $newTenantsThisMonth ?? 0 }} tháng này
+                            <i class="bi bi-arrow-up"></i> +{{ $newTenantsThisMonth ?? 0 }} trong tháng này
                         </small>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                     <div class="card-body px-4 py-4">
                         <div class="row align-items-center">
                             <div class="col-8">
-                                <h6 class="text-muted font-semibold mb-2">Người dùng</h6>
+                                <h6 class="text-muted font-semibold mb-2">Người dùng hệ thống</h6>
                                 <h4 class="font-extrabold mb-0">{{ $totalUsers ?? 0 }}</h4>
                             </div>
                             <div class="col-4 text-end">
@@ -63,7 +63,7 @@
                             </div>
                         </div>
                         <small class="text-success mt-2 d-block">
-                            <i class="bi bi-arrow-up"></i> {{ $activeUsers ?? 0 }} đang hoạt động
+                            <i class="bi bi-arrow-right"></i> {{ $activeUsers ?? 0 }} đang hoạt động
                         </small>
                     </div>
                 </div>
@@ -94,17 +94,17 @@
                     <div class="card-body px-4 py-4">
                         <div class="row align-items-center">
                             <div class="col-8">
-                                <h6 class="text-muted font-semibold mb-2">Lưu trữ</h6>
-                                <h4 class="font-extrabold mb-0">{{ $storageUsed ?? 0 }}GB</h4>
+                                <h6 class="text-muted font-semibold mb-2">Chủ cửa hiệu</h6>
+                                <h4 class="font-extrabold mb-0">{{ $adminTenants ?? 0 }}</h4>
                             </div>
                             <div class="col-4 text-end">
                                 <div class="stats-icon-modern bg-gradient-danger">
-                                    <i class="bi bi-hdd text-white"></i>
+                                    <i class="bi bi-people text-white"></i>
                                 </div>
                             </div>
                         </div>
-                        <small class="text-muted mt-2 d-block">
-                            <i class="bi bi-info-circle"></i> {{ $storageLimit ?? 100 }}GB giới hạn
+                        <small class="text-success mt-2 d-block">
+                            <i class="bi bi-arrow-up"></i> +{{ $newAdminTenantsThisMonth ?? 0 }} trong tháng này
                         </small>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        {{-- <canvas></canvas> --}}
+                        <canvas id="revenueChart" height="100"></canvas>
                     </div>
                 </div>
             </div>
@@ -132,12 +132,14 @@
                 <div class="card shadow-sm">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="bi bi-pie-chart me-2"></i>Trạng thái Tenant
+                            <i class="bi bi-pie-chart me-2"></i>Trạng thái cửa hiệu
                         </h5>
                     </div>
                     <div class="card-body">
                         <div style="height: 250px; position: relative;">
-                            {{-- <canvas></canvas> --}}
+                            <div class="card-body">
+                                <canvas id="tenantStatusChart" height="250"></canvas>
+                            </div>
                         </div>
                         <div class="mt-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -170,7 +172,7 @@
                         <h5 class="mb-0">
                             <i class="bi bi-clock-history me-2"></i>Hoạt động gần đây
                         </h5>
-                        <a href="#" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
@@ -206,17 +208,17 @@
                 <div class="card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
-                            <i class="bi bi-star me-2"></i>Tenant hàng đầu
+                            <i class="bi bi-star me-2"></i>Cửa hiệu hàng đầu
                         </h5>
-                        <a href="#" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                        <a href="{{ route('tenant.index') }}" class="btn btn-sm btn-outline-primary">Chi tiết</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Tenant</th>
-                                        <th>Người dùng</th>
+                                        <th>Cửa hiệu</th>
+                                        <th>Chủ cửa hiệu</th>
                                         <th>Doanh thu</th>
                                         <th>Trạng thái</th>
                                     </tr>
@@ -228,18 +230,29 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar avatar-sm me-2">
                                                         <span class="avatar-content bg-light-primary">
-                                                            {{ substr($tenant['name'] ?? 'T', 0, 1) }}
+                                                            {{ substr($tenant->name ?? 'T', 0, 1) }}
                                                         </span>
                                                     </div>
-                                                    <span class="fw-bold">{{ $tenant['name'] ?? 'Tenant' }}</span>
+                                                    <span class="fw-bold">{{ $tenant->name ?? 'Tenant' }}</span>
                                                 </div>
                                             </td>
-                                            <td>{{ $tenant['users'] ?? 0 }}</td>
-                                            <td>{{ number_format($tenant['revenue'] ?? 0) }}đ</td>
+                                            <td>{{ $tenant->admin_name ?? 0 }}</td>
+                                            <td>{{ number_format($tenant->revenue ?? 0) }}đ</td>
                                             <td>
-                                                <span class="badge bg-light-success">
-                                                    <i class="bi bi-check-circle me-1"></i>Hoạt động
-                                                </span>
+                                                @if ($tenant->is_active)
+                                                    <span class="badge bg-light-success">
+                                                        <i class="bi bi-check-circle me-1"></i>Hoạt động
+                                                    </span>
+                                                @elseif(!$tenant->is_active && $tenant->maintenance_mode != null)
+                                                    <span class="badge bg-light-secondary">
+                                                        <i class="bi bi-x-circle me-1"></i>Bảo trì
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-light-danger">
+                                                        <i class="bi bi-x-circle me-1"></i>Đã bị xoá
+                                                    </span>
+                                                @endif
+
                                             </td>
                                         </tr>
                                     @empty
@@ -257,6 +270,7 @@
                 </div>
             </div>
         </div>
+        {{-- pseudo data --}}
         <div class="row">
             <div class="col-12">
                 <div class="card shadow-sm">
@@ -320,4 +334,53 @@
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="{{ asset('assets/custom/js/dashboard/dashboard.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+
+                        // pseudo data
+                        labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                        datasets: [{
+                            label: 'Doanh thu',
+                            data: [100000, 200000, 150000, 300000, 250000, 400000, 350000],
+                            borderWidth: 2,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+            const tenantCtx = document.getElementById('tenantStatusChart');
+            if (tenantCtx) {
+                new Chart(tenantCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Hoạt động', 'Bảo trì', 'Đã xoá'],
+                        datasets: [{
+                            data: [
+                                {{ $activeTenants ?? 0 }},
+                                {{ $suspendedTenants ?? 0 }},
+                                {{ $expiredTenants ?? 0 }}
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

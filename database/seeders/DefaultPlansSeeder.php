@@ -20,7 +20,8 @@ class DefaultPlansSeeder extends Seeder
                     'name' => 'Dịch vụ miễn phí',
                     'description' => 'Đây là gói dịch vụ miễn phí mặc định của hệ thống.',
                     'price' => 0,
-                    'cycle' => 'monthly',
+                    'cycle' => 'weekly',
+                    'is_default' => true,
                 ]
             );
             $this->command->info('Gói dịch vụ mặc định đã được tạo thành công.');

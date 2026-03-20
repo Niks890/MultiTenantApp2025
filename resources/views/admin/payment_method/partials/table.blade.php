@@ -17,7 +17,11 @@
                 </td>
                 <td class="text-center action-cell">
                     <div class="action-buttons">
-                        <a href="{{ route('payment-methods.edit', $paymentMethod->id) }}" class="btn-action btn-action-edit"
+
+                        @if($paymentMethod->is_default)
+                            <span class="btn-action">{{ __('default') }}</span>
+                            @else
+                               <a href="{{ route('payment-methods.edit', $paymentMethod->id) }}" class="btn-action btn-action-edit"
                             title="{{ __('edit') }}">
                             <i class="fas fa-edit"></i>
                         </a>
@@ -29,6 +33,8 @@
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
+                        @endif
+
                     </div>
                 </td>
             </tr>

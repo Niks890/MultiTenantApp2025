@@ -10,7 +10,7 @@
         <div class="d-flex align-items-start justify-content-start flex-column flex-md-row pt-2 pb-4 row mt-3 ms-3">
             <div class="col-12 col-md-7">
                 <p class="fw-bold text-break mb-0 text-center text-md-start header-title">
-                    Xem chi tiết hợp đồng của cửa hiệu
+                    Xem chi tiết hợp đồng của cửa hiệu {{ $contract->tenant?->name ?? '—' }}
                 </p>
             </div>
         </div>
@@ -68,7 +68,6 @@
                             <span class="info-label">{{ __('Email người thuê') }}</span>
                             <span class="info-value">{{ $contract->tenant?->adminTenant?->email ?? '—' }}</span>
                         </div>
-
                         <div class="info-row-item">
                             <span class="info-label">{{ __('Trạng thái hợp đồng') }}</span>
                             <span class="info-value">
@@ -80,13 +79,11 @@
                                         4 => ['label' => __('expired'), 'class' => 'bg-secondary'],
                                         5 => ['label' => __('tenant_deleted'), 'class' => 'bg-dark'],
                                     ];
-
                                     $statusInfo = $statusMap[(int) $contract->status] ?? [
                                         'label' => '—',
                                         'class' => 'badge-secondary',
                                     ];
                                 @endphp
-
                                 <span class="badge {{ $statusInfo['class'] }}">
                                     {{ $statusInfo['label'] }}
                                 </span>
@@ -120,19 +117,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="summary-card">
-                                <div class="summary-label">{{ __('Tổng cộng đã đóng') }}</div>
-                                <div class="summary-value">
-                                    {{ number_format($contract->total_paid, 0, ',', '.') }} ₫
+                        <div id="summaryPaymentWrapper">
+                            <div class="row gap-2">
+                                <div class="col-12">
+                                    <div class="summary-card">
+                                        <div class="summary-label">{{ __('Tổng cộng đã đóng') }}</div>
+                                        <div class="summary-value">
+                                            {{ number_format($contract->total_paid, 0, ',', '.') }} ₫
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="summary-card summary-card--danger">
-                                <div class="summary-label">{{ __('Số tiền còn nợ') }}</div>
-                                <div class="summary-value text-danger">
-                                    {{ number_format($contract->amount_after_tax - $contract->total_paid, 0, ',', '.') }} ₫
+                                <div class="col-12 mt-1">
+                                    <div class="summary-card summary-card--danger">
+                                        <div class="summary-label">{{ __('Số tiền còn nợ') }}</div>
+                                        <div class="summary-value text-danger">
+                                            {{ number_format($contract->amount_after_tax - $contract->total_paid, 0, ',', '.') }}
+                                            ₫
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -143,9 +145,16 @@
             <hr class="border-dashed my-4">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <p class="fw-bold mb-0">{{ __('Danh sách các lần thanh toán') }}</p>
-                <button type="button" class="btn btn-success btn-sm" id="btnAddPayment">
-                    <i class="fa fa-plus me-1"></i>{{ __('Thêm mới') }}
-                </button>
+                @if ($contract->total_paid < $contract->amount_after_tax)
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modalAddTransaction">
+                        <i class="fas fa-plus"></i> {{ __('Thêm giao dịch') }}
+                    </button>
+                @else
+                    <button type="button" class="btn btn-success" disabled>
+                        <i class="fas fa-check-circle"></i> {{ __('Đã thanh toán đủ') }}
+                    </button>
+                @endif
             </div>
 
             <div class="table-responsive" id="paymentTableWrapper">
@@ -158,14 +167,17 @@
                     'transactions' => $transactions,
                 ])
             </div>
-
         </div>
     </div>
+
     @include('admin.contracts.partials.modal-add-transaction')
+    @include('admin.contracts.partials.modal-edit-transaction')
 @endsection
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/custom/css/table.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <style>
         .info-block {
             display: flex;
@@ -227,104 +239,54 @@
             border-color: #0d6efd;
             background: #f0f5ff;
         }
+
+        .choices.is-invalid .choices__inner {
+            border-color: #dc3545;
+        }
+
+
+        .invalid-feedback.d-block {
+            display: block !important;
+        }
+
+
+        .flatpickr-calendar {
+            z-index: 9999 !important;
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            padding: 2px !important;
+        }
     </style>
 @endsection
 
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
+        const confirmDeleteBtnLabel = @json(__('delete_confirm'));
+        const deleteBtnLabel = @json(__('delete'));
+        const cancelBtnLabel = @json(__('cancel'));
         const storeTransactionUrl = "{{ route('transaction.store') }}";
-
-        // Mở modal
-        $('#btnAddPayment').on('click', function() {
-            const form = $('#formAddTransaction')[0];
-            form.reset();
-            $('#formAddTransaction').removeClass('was-validated');
-
-            // Đã xóa reset choices
-
-            $('#file_path').val('');
-            $('#imagePreview').attr('src', '');
-            $('#imagePreviewWrapper').addClass('d-none');
-            $('#uploadArea').removeClass('d-none');
-            $('#modalAddTransaction').modal('show');
-        });
-
-        // Reset khi đóng modal
-        $('#modalAddTransaction').on('hidden.bs.modal', function() {
-            const form = $('#formAddTransaction')[0];
-            form.reset();
-            $('#formAddTransaction').removeClass('was-validated');
-            $('#file_path').val('');
-            $('#imagePreview').attr('src', '');
-            $('#imagePreviewWrapper').addClass('d-none');
-            $('#uploadArea').removeClass('d-none');
-        });
-
-        // Preview ảnh (giữ nguyên)
-        $('#file_path').on('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                $('#imagePreview').attr('src', e.target.result);
-                $('#imagePreviewWrapper').removeClass('d-none');
-                $('#uploadArea').addClass('d-none');
-            };
-            reader.readAsDataURL(file);
-        });
-
-        $('#btnRemoveImage').on('click', function() {
-            $('#file_path').val('');
-            $('#imagePreview').attr('src', '');
-            $('#imagePreviewWrapper').addClass('d-none');
-            $('#uploadArea').removeClass('d-none');
-        });
-
-        $('#formAddTransaction').on('submit', function(e) {
-            e.preventDefault();
-            if (!this.checkValidity()) {
-                $(this).addClass('was-validated');
-                return;
-            }
-
-            const formData = new FormData(this);
-            const $btn = $('#btnSaveTransaction');
-
-            $btn.prop('disabled', true).html(
-                '<span class="spinner-border spinner-border-sm me-1"></span>{{ __('Đang lưu...') }}'
-            );
-
-            $.ajax({
-                url: storeTransactionUrl,
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(res) {
-                    $('#modalAddTransaction').modal('hide');
-                    $.get(window.location.href, function(html) {
-                        const $html = $(html);
-                        $('#paymentTableWrapper').html($html.find('#paymentTableWrapper').html());
-                        $('#paymentPaginationWrapper').html($html.find('#paymentPaginationWrapper').html());
-                    });
-                    showToast('success', res.message ?? '{{ __('Thêm giao dịch thành công.') }}');
-                    window.location.reload();
-                },
-                error: function(xhr) {
-                    const errors = xhr.responseJSON?.errors;
-                    if (errors) {
-                        Object.values(errors).flat().forEach(msg => toastr.error(msg));
-                    } else {
-                        showToast('error', '{{ __('Đã có lỗi xảy ra. Vui lòng thử lại.') }}');
-                    }
-                },
-                complete: function() {
-                    $btn.prop('disabled', false).html('<i class="fa fa-save me-1"></i>{{ __('Lưu') }}');
-                }
-            });
+        const updateTransactionUrl = "{{ route('transaction.update', ':id') }}";
+        const TRANSLATIONS = {
+            saving: "{{ __('Đang lưu...') }}",
+            save: "{{ __('Lưu') }}",
+            success_add: "{{ __('Thêm giao dịch thành công.') }}",
+            success_update: "{{ __('Cập nhật giao dịch thành công.') }}",
+            error_general: "{{ __('Đã có lỗi xảy ra. Vui lòng thử lại.') }}",
+            error_file_select: "{{ __('Vui lòng giữ ảnh cũ hoặc tải lên ảnh mới.') }}",
+            error_invoice: "{{ __('Vui lòng tải lên ảnh hóa đơn.') }}",
+            error_format: "{{ __('Chỉ chấp nhận ảnh định dạng JPG, PNG, WEBP.') }}",
+            error_size: "{{ __('Ảnh tải lên có kích thước tối đa không quá :size MB.') }}"
+        };
+    </script>
+    <script src="{{ asset('assets/custom/js/transaction/validate.js') }}"></script>
+    <script src="{{ asset('assets/custom/js/transaction/delete.js') }}"></script>
+    <script>
+        $(document).on('transaction:deleted', function() {
+            reloadContractPartials();
         });
     </script>
 @endsection

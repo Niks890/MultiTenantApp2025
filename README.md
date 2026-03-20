@@ -113,6 +113,9 @@ php artisan db:seed --class=SystemUserSeeder
 # Create default plans
 php artisan db:seed --class=DefaultPlansSeeder
 
+# Create default payment methods
+php artisan db:seed --class=DefaultPaymentSeeder
+
 # Seed provinces and wards
 php artisan db:seed --class=VietnamUnitsSeeder
 ```

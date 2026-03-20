@@ -30,6 +30,9 @@ class TransactionRepository implements TransactionRepositoryInterface
 
     public function delete($id)
     {
-        return Transaction::destroy($id);
+        $transaction = Transaction::find($id);
+        $transaction->delete_flg = 1;
+        $transaction->save();
+        return $transaction;
     }
 }

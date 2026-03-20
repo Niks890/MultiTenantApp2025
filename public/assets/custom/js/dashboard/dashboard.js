@@ -16,5 +16,4 @@ $(document).ready(function () {
         function () { $(this).addClass("hover-card"); },
         function () { $(this).removeClass("hover-card"); }
     );
-
 });

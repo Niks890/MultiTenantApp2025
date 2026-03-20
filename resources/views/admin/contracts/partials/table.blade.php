@@ -100,7 +100,7 @@
                             title="{{ __('view') }} {{ __('detail') }}">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        @if (!$contract->delete_flg && in_array($contract->status, [1]))
+                        @if (!$contract->delete_flg && $contract->total_paid >= $contract->amount_after_tax)
                             <form method="POST" action="{{ route('contracts.destroy', $contract->id) }}"
                                 class="d-inline" style="margin:0;">
                                 @csrf @method('DELETE')
